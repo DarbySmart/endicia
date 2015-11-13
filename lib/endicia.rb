@@ -74,16 +74,15 @@ module Endicia
     root_attributes = extract(opts, root_keys)
     root_attributes[:LabelType] ||= "Default"
 
-    dimension_keys = :Length, :Width, :Height
-    mailpiece_dimenions = extract(opts, dimension_keys)
+    mailpiece_dimensions = opts.delete(:MailpieceDimensions)
 
     xml = Builder::XmlMarkup.new
     body = "labelRequestXML=" + xml.LabelRequest(root_attributes) do |xm|
       opts.each { |key, value| xm.tag!(key, value) }
       xm.Services({ :InsuredMail => insurance }) if insurance
-      unless mailpiece_dimenions.empty?
+      unless mailpiece_dimensions.empty?
         xm.MailpieceDimensions do |md|
-          mailpiece_dimenions.each { |key, value| md.tag!(key, value) }
+          mailpiece_dimensions.each { |key, value| md.tag!(key, value) }
         end
       end
     end
